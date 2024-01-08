@@ -12,7 +12,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from Formating import Point, DescriptFormating, StepsFormating, PlatformFormating, about_text
+from Formating import Point, DescriptFormating, StepsFormating, PlatformFormating, about_text, dict_values
 
 TOKEN = os.getenv('TOKEN')
 
@@ -55,6 +55,12 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
 @br_router.message(F.text.casefold() == "/info")
 async def info(message: Message)-> None:
     msg = await message.answer(f"{about_text()}")
+    ids.extend((message.message_id, msg.message_id))
+
+@br_router.message(Command("dict"))
+@br_router.message(F.text.casefold() == "/dict")
+async def info (message: Message)->None:
+    msg = await message.answer(dict_values())
     ids.extend((message.message_id, msg.message_id))
 
 @br_router.message(Report.media_file)
@@ -106,33 +112,17 @@ async def show_summary(message: Message, data: Dict[str, Any]) -> None:
         builder.add(types.InlineKeyboardButton(text='Delete', callback_data='clear'))
         
         media_file = data.get("media_file")
+
+        values = [data.get('title'), data.get('description'), data.get('steps'), data.get('severity'), data.get('environment')]
+        titles = ['Название: ','\n\nОписание:\n','\n\nШаги воспроизведения:\n','\nСерьезность\n','\n\nПлатформа:\n']
+        funcs = [Point, DescriptFormating, StepsFormating, Point, PlatformFormating]
+        skips = ['pass', 'пасс', 'пас', '...']
         br_text = ""
 
-        title = data.get('title')
-        if title != 'pass':
-            title = Point(title)
-            br_text += f"<b>Title:</b> {''.join(title)}\n\n"
-        
-        description = data.get('description')
-        if description != 'pass':
-            description = DescriptFormating(description)
-            br_text += f"<b>Description:</b>\n{''.join(description)}\n\n"
-        
-        steps = data.get('steps')
-        if steps != 'pass':
-            steps = StepsFormating(steps)
-            br_text += f"<b>Steps:</b>\n{''.join(steps)}\n"
-        
-        severity = data.get('severity')
-        if severity != 'pass':
-            severity = Point(severity)
-            br_text+= f"<b>Severity:</b>\n{''.join(severity)}\n\n"
-        
-        environment = data.get('environment')
-        if environment != 'pass':
-            environment = PlatformFormating(environment)
-            br_text += f"<b>Environment:</b>{''.join(environment)}"
-        
+        for i in range(len(values)):
+            if values[i] not in skips:
+                br_text += f"<b>{titles[i]}</b>{''.join(funcs[i](values[i]))}"
+
         if media_file.photo:
             msg = await bot.send_photo(message.chat.id, media_file.photo[-1].file_id, caption=f"{br_text}", reply_markup=builder.as_markup())
             ids.append(msg.message_id)
@@ -142,14 +132,18 @@ async def show_summary(message: Message, data: Dict[str, Any]) -> None:
         else:
             msg = await message.answer(f"{br_text}", reply_markup=builder.as_markup())
             ids.append(msg.message_id)
+        print(f"messages id: \n\n{ids}\n\n")
     except Exception as e:
         await message.answer(text=f"<b>Some error occurred. Debug message:</b>\n\n<code>{e}</code>", parse_mode='html')
 
 @br_router.callback_query()
 async def clear(callback_query: types.CallbackQuery) -> Any:
-    for id in ids: 
-        await bot.delete_message(chat_id, id)
-    ids.clear()
+    try:
+        for id in ids: 
+            await bot.delete_message(chat_id, id)
+        ids.clear()
+    except Exception as e:
+        print(f"Some error: {e}")
 
 async def main():
     bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)

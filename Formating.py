@@ -57,9 +57,18 @@ def PlatformFormating(message) -> list:
     message = DeleteSpace(Split(message, '.'))
     platform = {v: k for k, values in dict.items() for v in values}
     for index in range(len(message)):
-        message[index] = "\n" + platform.get(message[index], message[index]) + "."
+        message[index] = platform.get(message[index], message[index]) + ".\n"
     return message
+
+
 
 def about_text() -> str:
     message = "This bot is designed to create bug reports while testing.\n\nThe proposed structure consists of media file (image or video), title, description, reproduction steps, severity and bug detection environment.\n\nType the command '<b>/start</b>' to start the creation. You can skip the bug report field by typing the word '<code>pass</code>' in the message.\n\nTo cancel the creation, enter the command '<b>/cancel</b>'. Canceling will delete some messages in chat with the bot.\n\nContact the owner for more information: @vat1kan."
     return message
+
+def dict_values()-> str:
+    message = "Here is a list of abbreviations/synonyms for bug detection environment. When creating a bug report, it is enough to specify the corresponding abbreviation for automatic conversion into the environment name.\n"
+    for key, values in dict.items():
+        message += f"\n<b>{key}:</b>\n{', '.join(values)}, \n"
+    return message
+    
