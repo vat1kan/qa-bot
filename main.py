@@ -143,7 +143,7 @@ async def clear(callback_query: types.CallbackQuery) -> Any:
             await bot.delete_message(chat_id, id)
         ids.clear()
     except Exception as e:
-        print(f"Some error: {e}")
+        print(f"Some error occurred:\n\n{e}")
 
 async def main():
     bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)

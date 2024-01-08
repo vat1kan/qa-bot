@@ -60,8 +60,6 @@ def PlatformFormating(message) -> list:
         message[index] = platform.get(message[index], message[index]) + ".\n"
     return message
 
-
-
 def about_text() -> str:
     message = "This bot is designed to create bug reports while testing.\n\nThe proposed structure consists of media file (image or video), title, description, reproduction steps, severity and bug detection environment.\n\nType the command '<b>/start</b>' to start the creation. You can skip the bug report field by typing the word '<code>pass</code>' in the message.\n\nTo cancel the creation, enter the command '<b>/cancel</b>'. Canceling will delete some messages in chat with the bot.\n\nContact the owner for more information: @vat1kan."
     return message

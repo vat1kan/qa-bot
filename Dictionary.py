@@ -8,4 +8,5 @@ dict = {
     'Microsoft Edge': ['edge','edg','microsoft edge','Microsoft edge','Microsoft Edge','mic edg'],
     'iOS': ['ios','IOS','io','IOs','IoS','iOS','айос','Айос'],
     'Android': ['андроид','Андроид','дроид','Android','android'],
+    'Tablet': ['tablet','ipad','pad', 'Ipad', 'ipados','планшет']
 }
