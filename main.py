@@ -59,9 +59,14 @@ async def info(message: Message)-> None:
 
 @br_router.message(Command("dict"))
 @br_router.message(F.text.casefold() == "/dict")
-async def info (message: Message)->None:
+async def dict(message: Message)->None:
     msg = await message.answer(dict_values())
     ids.extend((message.message_id, msg.message_id))
+
+@br_router.message(Command("clear"))
+@br_router.message(F.text.casefold() == "/clear")
+async def clear(message: Message)-> None:
+    ids.clear()
 
 @br_router.message(Report.media_file)
 async def process_media(message: Message, state: FSMContext) -> None:
@@ -114,27 +119,26 @@ async def show_summary(message: Message, data: Dict[str, Any]) -> None:
         media_file = data.get("media_file")
 
         values = [data.get('title'), data.get('description'), data.get('steps'), data.get('severity'), data.get('environment')]
-        titles = ['Название: ','\n\nОписание:\n','\n\nШаги воспроизведения:\n','\nСерьезность\n','\n\nПлатформа:\n']
+        titles = ['Название: ','Описание:\n','Шаги воспроизведения:','Серьезность:\n','Платформа:\n']
         funcs = [Point, DescriptFormating, StepsFormating, Point, PlatformFormating]
         skips = ['pass', 'пасс', 'пас', '...']
         br_text = ""
 
         for i in range(len(values)):
             if values[i] not in skips:
-                br_text += f"<b>{titles[i]}</b>{''.join(funcs[i](values[i]))}"
+                br_text += f"<b>\n\n{titles[i]}</b>{''.join(funcs[i](values[i]))}"
 
         if media_file.photo:
-            msg = await bot.send_photo(message.chat.id, media_file.photo[-1].file_id, caption=f"{br_text}", reply_markup=builder.as_markup())
+            msg = await bot.send_photo(message.chat.id, media_file.photo[-1].file_id, caption=f"{br_text}", reply_markup=builder.as_markup(), parse_mode='html')
             ids.append(msg.message_id)
         elif media_file.video:
-            msg = await bot.send_video(message.chat.id, media_file.video.file_id, caption=f"{br_text}", reply_markup=builder.as_markup())
+            msg = await bot.send_video(message.chat.id, media_file.video.file_id, caption=f"{br_text}", reply_markup=builder.as_markup(),parse_mode='html')
             ids.append(msg.message_id)
         else:
             msg = await message.answer(f"{br_text}", reply_markup=builder.as_markup())
             ids.append(msg.message_id)
-        print(f"messages id: \n\n{ids}\n\n")
     except Exception as e:
-        await message.answer(text=f"<b>Some error occurred. Debug message:</b>\n\n<code>{e}</code>", parse_mode='html')
+        await message.answer(text=f"<b>Some error occurred. \n\nDebug message:</b>\n<code>{e}</code>\n\nType command <b>/clear</b> and manully delete last messages. After that, start again with <b>/start</b>.", parse_mode='html')
 
 @br_router.callback_query()
 async def clear(callback_query: types.CallbackQuery) -> Any:

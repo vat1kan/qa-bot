@@ -50,7 +50,7 @@ def DescriptFormating(message) -> list:
 def StepsFormating(message) -> list:
     message = Point(Split(message,'.'))
     for index in range(len(message)):
-        message[index] = f"{index+1}) " + message[index] + "\n"
+        message[index] = f"\n{index+1}) " + message[index]
     return message
 
 def PlatformFormating(message) -> list:
