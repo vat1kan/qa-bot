@@ -1,4 +1,4 @@
-This Telegram bot is designed to create bug reports while testing.
+This Telegram bot is designed to create bug reports while testing.\n
 The proposed structure consists of media file (image or video), title, description, reproduction steps, severity and bug detection environment.
 Use command '<code>/start</code>' to start the creation. You can skip the bug report field by typing the word '<code>pass</code>' in the message.
 To cancel the creation, enter the command '<code>/cancel</code>'. Canceling will delete some messages in chat with the bot.
